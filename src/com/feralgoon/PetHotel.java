@@ -1,12 +1,10 @@
 package com.feralgoon;
 
-import java.util.Map;
-import java.util.Scanner;
-import java.util.TreeMap;
+import java.util.*;
 
 public class PetHotel
 {
-    private Map<Integer, String> pets;
+    private Map<Integer,ArrayList<String>> pets;
     private String[] splitChoice;
 
     public void run()
@@ -30,7 +28,7 @@ public class PetHotel
 
     private void moveUp()
     {
-        String tempPetName = pets.get(109);
+        ArrayList<String> tempPetName = pets.get(109);
 
         for(int i = 109; i > 100; i--)
         {
@@ -42,7 +40,7 @@ public class PetHotel
 
     private void moveDown()
     {
-        String tempPetName = pets.get(100);
+        ArrayList<String> tempPetName = pets.get(100);
 
         for(int i = 100; i < 109; i++)
         {
@@ -56,8 +54,8 @@ public class PetHotel
     {
         int roomOne         = Integer.parseInt(splitChoice[1]);
         int roomTwo         = Integer.parseInt(splitChoice[2]);
-        String petOneName   = pets.get(roomOne);
-        String petTwoName   = pets.get(roomTwo);
+        ArrayList<String> petOneName   = pets.get(roomOne);
+        ArrayList<String> petTwoName   = pets.get(roomTwo);
 
         if (petOneName == null)
         {
@@ -86,8 +84,8 @@ public class PetHotel
     {
         System.out.println("Current Occupancy:");
         System.out.println();
-        System.out.println("Room number\t\tPet Name");
-        System.out.println("------------------------");
+        System.out.println("Room number\t\tPet Names");
+        System.out.println("----------------------------------------");
         for(int i = 100; i < 110; i++)
         {
             if (pets.get(i) != null)
@@ -121,17 +119,35 @@ public class PetHotel
     private void checkOut()
     {
         int roomNumber = Integer.parseInt(splitChoice[1]);
-        String petName = pets.remove(roomNumber);
-
-        if (petName != null)
+        String petToCheckout;
+        if (splitChoice.length > 2)
         {
-            System.out.println("Goodbye " + petName + "!");
-            System.out.println();
+            petToCheckout = splitChoice[2];
+            if (pets.get(roomNumber).contains(petToCheckout))
+            {
+                pets.get(roomNumber).remove(petToCheckout);
+                System.out.println("Goodbye " + petToCheckout + "!");
+                System.out.println();
+            }
+            else
+            {
+                System.out.println(petToCheckout + " is not in room " + roomNumber);
+            }
         }
         else
         {
-            System.out.println("Room already empty!");
-            System.out.println();
+            ArrayList<String> petName = pets.remove(roomNumber);
+
+            if (petName != null)
+            {
+                System.out.println("Goodbye " + petName + "!");
+                System.out.println();
+            }
+            else
+            {
+                System.out.println("Room already empty!");
+                System.out.println();
+            }
         }
     }
 
@@ -143,9 +159,13 @@ public class PetHotel
         petName = splitChoice[1];
         roomNumber = Integer.parseInt(splitChoice[2]);
 
-        if (pets.get(roomNumber) != null)
+        if (pets.get(roomNumber) == null)
         {
-            System.out.println("Room currently occupied. Please choose another room.");
+            pets.put(roomNumber,new ArrayList<>());
+        }
+        if (pets.get(roomNumber).size() == 4)
+        {
+            System.out.println("Room currently full. Please choose another room.");
             return;
         }
         if (roomNumber < 100 || roomNumber > 109)
@@ -154,7 +174,7 @@ public class PetHotel
             return;
         }
 
-        pets.put(roomNumber,petName);
+        pets.get(roomNumber).add(petName);
         System.out.println("Checked " + petName + " in to room " + roomNumber + ".");
     }
 
